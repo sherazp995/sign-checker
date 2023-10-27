@@ -5,7 +5,7 @@ import 'package:sign_checker/utils/validator.dart';
 
 class RegisterScreen extends StatefulWidget {
   static String id = "register_screen";
-  const RegisterScreen({Key? key}) : super(key: key);
+  const RegisterScreen({super.key});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();

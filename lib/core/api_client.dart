@@ -4,18 +4,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:sign_checker/core/constants.dart';
 
 class ApiClient {
-  final Dio _dio = Dio();
-  final String? apiUrl = dotenv.env['BASE_URL'];
+  // final Dio _dio = Dio();
+  // final String? apiUrl = dotenv.env['BASE_URL'];
 
   Future<dynamic> registerUser(Map<String, dynamic>? data) async {
     try {
-      Response response = await _dio.post(
-        'https://api.loginradius.com/identity/v2/auth/register',
-        data: data,
+      // Response response = await _dio.post(
+      //   'https://api.loginradius.com/identity/v2/auth/register',
+      //   data: data,
         // queryParameters: {'apikey': ApiSecret.apiKey},
         // options: Options(headers: {'X-LoginRadius-Sott': ApiSecret.sott})
-      );
-      return response.data;
+      // );
+      // return response.data;
+      return null;
     } on DioException catch (e) {
       return e.response!.data;
     }
@@ -23,15 +24,16 @@ class ApiClient {
 
   Future<dynamic> login(String email, String password) async {
     try {
-      Response response = await _dio.post(
-        'https://api.loginradius.com/identity/v2/auth/login',
-        data: {
-          'email': email,
-          'password': password,
-        },
+      // Response response = await _dio.post(
+      //   'https://api.loginradius.com/identity/v2/auth/login',
+      //   data: {
+      //     'email': email,
+      //     'password': password,
+      //   },
         // queryParameters: {'apikey': ApiSecret.apiKey},
-      );
-      return response.data;
+      // );
+      // return response.data;
+      return null;
     } on DioException catch (e) {
       return e.response!.data;
     }
@@ -39,14 +41,15 @@ class ApiClient {
 
   Future<dynamic> getUserProfileData(String accessToken) async {
     try {
-      Response response = await _dio.get(
-        'https://api.loginradius.com/identity/v2/auth/account',
+      // Response response = await _dio.get(
+      //   'https://api.loginradius.com/identity/v2/auth/account',
         // queryParameters: {'apikey': ApiSecret.apiKey},
-        options: Options(
-          headers: {'Authorization': 'Bearer $accessToken'},
-        ),
-      );
-      return response.data;
+        // options: Options(
+        //   headers: {'Authorization': 'Bearer $accessToken'},
+        // ),
+      // );
+      // return response.data;
+      return null;
     } on DioException catch (e) {
       return e.response!.data;
     }
@@ -57,15 +60,16 @@ class ApiClient {
     required Map<String, dynamic> data,
   }) async {
     try {
-      Response response = await _dio.put(
-        'https://api.loginradius.com/identity/v2/auth/account',
-        data: data,
+      // Response response = await _dio.put(
+      //   'https://api.loginradius.com/identity/v2/auth/account',
+      //   data: data,
         // queryParameters: {'apikey': ApiSecret.apiKey},
-        options: Options(
-          headers: {'Authorization': 'Bearer $accessToken'},
-        ),
-      );
-      return response.data;
+        // options: Options(
+        //   headers: {'Authorization': 'Bearer $accessToken'},
+        // ),
+      // );
+      // return response.data;
+      return null;
     } on DioException catch (e) {
       return e.response!.data;
     }
@@ -85,7 +89,7 @@ class ApiClient {
       // );
       return true;
     } on Error catch (e) {
-      print(e);
+      // print(e);
       return false;
     }
   }

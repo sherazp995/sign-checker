@@ -1,38 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:sign_checker/screens/register.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:camera/camera.dart';
+import 'package:sign_checker/LoginPage/loginPage.dart';
+import 'package:sign_checker/HomePage/cameraPage.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY']!;
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  List<CameraDescription>? cameras;
+  String? user = prefs.getString('user');
+  String? accessToken = prefs.getString('accessToken');
+  bool loggedIn = (user != null && accessToken != null && user.isNotEmpty && accessToken.isNotEmpty);
+
+  if (loggedIn) {
+    cameras = await availableCameras();
+  }
+
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: HomePage(loggedIn: loggedIn, cameras: cameras),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class HomePage extends StatelessWidget {
+  const HomePage({super.key, required this.loggedIn, required this.cameras});
+  final bool loggedIn;
+  final dynamic cameras;
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        primarySwatch: Colors.blue,
-      ),
-      home: const RegisterScreen(),
-    );
+    if (loggedIn) {
+      return CameraPage(cameras: cameras);
+    } else {
+      return LoginPage(loggedIn: loggedIn);
+    }
   }
 }
 

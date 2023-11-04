@@ -1,22 +1,16 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:sign_checker/core/constants.dart';
 
 class ApiClient {
-  // final Dio _dio = Dio();
-  // final String? apiUrl = dotenv.env['BASE_URL'];
+  final Dio _dio = Dio();
+  final String? apiUrl = dotenv.env['BASE_URL'];
 
   Future<dynamic> registerUser(Map<String, dynamic>? data) async {
     try {
-      // Response response = await _dio.post(
-      //   'https://api.loginradius.com/identity/v2/auth/register',
-      //   data: data,
-        // queryParameters: {'apikey': ApiSecret.apiKey},
-        // options: Options(headers: {'X-LoginRadius-Sott': ApiSecret.sott})
-      // );
-      // return response.data;
-      return null;
+      Response response =
+          await _dio.post('${apiUrl}users/register', data: data);
+      return response.data;
     } on DioException catch (e) {
       return e.response!.data;
     }
@@ -24,16 +18,21 @@ class ApiClient {
 
   Future<dynamic> login(String email, String password) async {
     try {
-      // Response response = await _dio.post(
-      //   'https://api.loginradius.com/identity/v2/auth/login',
-      //   data: {
-      //     'email': email,
-      //     'password': password,
-      //   },
+      Response response = await _dio.post(
+        '${apiUrl}users/login',
+        data: {
+          'email': email,
+          'password': password,
+        },
         // queryParameters: {'apikey': ApiSecret.apiKey},
-      // );
-      // return response.data;
-      return null;
+      );
+
+      if (response.data.status == 200) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('user', response.data.result);
+        prefs.setString('accessToken', response.data.jwtToken);
+      }
+      return response.data;
     } on DioException catch (e) {
       return e.response!.data;
     }
@@ -43,10 +42,10 @@ class ApiClient {
     try {
       // Response response = await _dio.get(
       //   'https://api.loginradius.com/identity/v2/auth/account',
-        // queryParameters: {'apikey': ApiSecret.apiKey},
-        // options: Options(
-        //   headers: {'Authorization': 'Bearer $accessToken'},
-        // ),
+      // queryParameters: {'apikey': ApiSecret.apiKey},
+      // options: Options(
+      //   headers: {'Authorization': 'Bearer $accessToken'},
+      // ),
       // );
       // return response.data;
       return null;
@@ -63,10 +62,10 @@ class ApiClient {
       // Response response = await _dio.put(
       //   'https://api.loginradius.com/identity/v2/auth/account',
       //   data: data,
-        // queryParameters: {'apikey': ApiSecret.apiKey},
-        // options: Options(
-        //   headers: {'Authorization': 'Bearer $accessToken'},
-        // ),
+      // queryParameters: {'apikey': ApiSecret.apiKey},
+      // options: Options(
+      //   headers: {'Authorization': 'Bearer $accessToken'},
+      // ),
       // );
       // return response.data;
       return null;
@@ -78,18 +77,10 @@ class ApiClient {
   Future<dynamic> logout(String accessToken) async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.remove('userId');
+      prefs.remove('user');
       prefs.remove('accessToken');
-      // Response response = await _dio.get(
-      // 'https://api.loginradius.com/identity/v2/auth/access_token/InValidate',
-      // queryParameters: {'apikey': ApiSecret.apiKey},
-      // options: Options(
-      // headers: {'Authorization': 'Bearer $accessToken'},
-      // ),
-      // );
       return true;
-    } on Error catch (e) {
-      // print(e);
+    } on Error catch (_) {
       return false;
     }
   }

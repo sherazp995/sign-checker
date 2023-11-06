@@ -6,14 +6,21 @@ import 'package:camera/camera.dart';
 import 'package:sign_checker/LoginPage/loginPage.dart';
 import 'package:sign_checker/HomePage/cameraPage.dart';
 
-void main() async {
+main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  List<CameraDescription>? cameras;
+  bool loggedIn;
+  String? user;
+  String? accessToken;
+  // await dotenv.load(fileName: ".env");
   // Stripe.publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY']!;
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  List<CameraDescription>? cameras;
-  String? user = prefs.getString('user');
-  String? accessToken = prefs.getString('accessToken');
-  bool loggedIn = (user != null && accessToken != null && user.isNotEmpty && accessToken.isNotEmpty);
+  user = prefs.getString('user');
+  accessToken = prefs.getString('accessToken');
+  loggedIn = (user != null &&
+      accessToken != null &&
+      user.isNotEmpty &&
+      accessToken.isNotEmpty);
 
   if (loggedIn) {
     cameras = await availableCameras();
@@ -41,4 +48,3 @@ class HomePage extends StatelessWidget {
     }
   }
 }
-

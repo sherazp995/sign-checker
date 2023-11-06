@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class SignupButton extends StatelessWidget {
-  const SignupButton({super.key});
+  const SignupButton({super.key, required this.onSubmit});
+  final Future<dynamic> Function() onSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -9,7 +10,7 @@ class SignupButton extends StatelessWidget {
       height: 50,
       width: 100,
       child: ElevatedButton(
-        onPressed: () {},
+        onPressed: onSubmit,
         child: Ink(
           decoration: BoxDecoration(
             gradient: const LinearGradient(

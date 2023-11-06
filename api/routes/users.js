@@ -44,18 +44,14 @@ router.get('/students_by_project/:id', async (req, res) => {
 
 router.post("/register", async (req, res) => {
   try {
-    let user = req.body.user;
+    let user = req.body;
     let result = await User.findOne({ email: user.email });
     let message = '';
     if (result) {
       message = 'User Already Exist!';
     }
     else {
-      user.username = user.email.split('@')[0];
       user.password = passwordHash.generate(user.password);
-      if (req.body.image){
-        user.image = saveImage(req.body.image, user.username);
-      }
       result = await User.create(user);
       message = 'User Created Successfully!';
     }
@@ -121,7 +117,7 @@ router.post('/deactivate/:id', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    let result = await User.findOne({ username: req.body.username });
+    let result = await User.findOne({ email: req.body.email });
 
     if (result) {
       if (passwordHash.verify(req.body.password, result.password)) {

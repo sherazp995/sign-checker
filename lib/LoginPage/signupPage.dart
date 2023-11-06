@@ -1,3 +1,4 @@
+import 'package:sign_checker/Core/apiClient.dart';
 import 'package:sign_checker/LoginPage/passwordField.dart';
 import 'package:flutter/material.dart';
 import 'package:sign_checker/LoginPage/signupButton.dart';
@@ -10,6 +11,12 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
+  Map<String, dynamic> registerData = {};
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final _apiClient = ApiClient();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -44,6 +51,7 @@ class _SignupPageState extends State<SignupPage> {
                     child: Column(
                       children: <Widget>[
                         TextField(
+                          controller: _firstNameController,
                           cursorColor: Colors.purpleAccent,
                           style: const TextStyle(
                               color: Color.fromRGBO(143, 148, 251, 1)),
@@ -54,6 +62,7 @@ class _SignupPageState extends State<SignupPage> {
                           ),
                         ),
                         TextField(
+                          controller: _lastNameController,
                           cursorColor: Colors.purpleAccent,
                           style: const TextStyle(
                               color: Color.fromRGBO(143, 148, 251, 1)),
@@ -64,6 +73,7 @@ class _SignupPageState extends State<SignupPage> {
                           ),
                         ),
                         TextField(
+                          controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
                           cursorColor: Colors.purpleAccent,
                           style: const TextStyle(
@@ -74,19 +84,16 @@ class _SignupPageState extends State<SignupPage> {
                             hintStyle: TextStyle(color: Colors.grey[400]),
                           ),
                         ),
-                        TextField(
-                          keyboardType: TextInputType.phone,
-                          cursorColor: Colors.purpleAccent,
-                          style: const TextStyle(
-                              color: Color.fromRGBO(143, 148, 251, 1)),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Phone Number",
-                            hintStyle: TextStyle(color: Colors.grey[400]),
-                          ),
+                        PasswordField(
+                            onPasswordChanged: (password) {
+                              registerData['password'] = password;
+                            }
                         ),
-                        const PasswordField(),
-                        const PasswordField(),
+                        PasswordField(
+                            onPasswordChanged: (confirmPassword) {
+                              registerData['confirmPassword'] = confirmPassword;
+                            }
+                        ),
                       ],
                     ),
                   ),
@@ -97,7 +104,17 @@ class _SignupPageState extends State<SignupPage> {
           const SizedBox(
             height: 30,
           ),
-          const SignupButton(),
+          SignupButton(
+            onSubmit: () async {
+              registerData['email'] = _emailController.text;
+              registerData['firstName'] = _firstNameController.text;
+              registerData['lastName'] = _lastNameController.text;
+              final res = await _apiClient.register(registerData);
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(res["message"]),
+              ));
+            },
+          ),
         ],
       ),
     );

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:sign_checker/HomePage/cameraPage.dart';
-import 'package:camera/camera.dart';
 
 class LoginButton extends StatelessWidget {
-  const LoginButton({super.key});
+  const LoginButton({super.key, required this.onSubmit});
+  final Future<dynamic> Function() onSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -11,10 +10,7 @@ class LoginButton extends StatelessWidget {
       height: 50,
       width: 100,
       child: ElevatedButton(
-        onPressed: () async {
-          await availableCameras().then((value) => Navigator.push(context,
-              MaterialPageRoute(builder: (_) => CameraPage(cameras: value))));
-        },
+        onPressed: onSubmit,
         child: Ink(
           decoration: BoxDecoration(
             gradient: const LinearGradient(

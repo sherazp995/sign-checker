@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-
 import 'package:sign_checker/LoginPage/verificationFields.dart';
 import 'package:sign_checker/LoginPage/loginButton.dart';
 import 'package:sign_checker/LoginPage/signupPage.dart';
 import 'package:sign_checker/LoginPage/loginDecoration.dart';
+import 'package:sign_checker/HomePage/cameraPage.dart';
+import 'package:sign_checker/Core/apiClient.dart';
+import 'package:camera/camera.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.loggedIn});
-  // const LoginPage({super.key});
+
   final bool loggedIn;
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -15,7 +17,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _pageLogin = true;
-  // bool _rememberPassword = false;
+  Map<String, dynamic> loginData = {};
+  final _apiClient = ApiClient();
 
   void _togglePage(bool switchme) {
     setState(
@@ -81,7 +84,9 @@ class _LoginPageState extends State<LoginPage> {
                       padding: const EdgeInsets.all(30.0),
                       child: Column(
                         children: <Widget>[
-                          const VerificationFields(),
+                          VerificationFields(onValueChanged: (type, value) {
+                            loginData[type] = value;
+                          }),
                           Container(
                             alignment: const AlignmentDirectional(1.0, 0.0),
                             child: TextButton(
@@ -97,7 +102,19 @@ class _LoginPageState extends State<LoginPage> {
                           const SizedBox(
                             height: 10,
                           ),
-                          const LoginButton(),
+                          LoginButton(onSubmit: () async {
+                            final res = await _apiClient.login(loginData);
+                            if (res["status"] == 200) {
+                              await availableCameras().then((value) =>
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (_) =>
+                                          CameraPage(cameras: value))));
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text(res["message"]),
+                              ));
+                            }
+                          },),
                         ],
                       ),
                     )

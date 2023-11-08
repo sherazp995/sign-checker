@@ -1,7 +1,8 @@
 import 'package:camera/camera.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:sign_checker/HomePage/previewPage.dart';
+import 'package:sign_checker/HomePage/settingsPage.dart';
 
 class CameraPage extends StatefulWidget {
   const CameraPage({super.key, required this.cameras});
@@ -45,7 +46,7 @@ class _CameraPageState extends State<CameraPage> {
                     picture: picture,
                   )));
     } on CameraException catch (e) {
-      debugPrint('Error occured while taking picture: $e');
+      debugPrint('Error occurred while taking picture: $e');
       return null;
     }
   }
@@ -98,14 +99,29 @@ class _CameraPageState extends State<CameraPage> {
                   },
                 )),
                 Expanded(
-                    child: IconButton(
-                  onPressed: takePicture,
-                  iconSize: 50,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                  icon: const Icon(Icons.circle, color: Colors.white),
-                )),
-                const Spacer(),
+                  child: IconButton(
+                    onPressed: takePicture,
+                    iconSize: 50,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    icon: const Icon(Icons.circle, color: Colors.white),
+                  )
+                ),
+                Expanded(
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    iconSize: 30,
+                    icon: const Icon(
+                        CupertinoIcons.settings,
+                        color: Colors.white),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SettingsPage()),
+                        );
+                      },
+                  )
+                ),
               ]),
             )),
       ]),

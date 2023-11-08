@@ -29,6 +29,7 @@ main() async {
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
+      // home: HomePage(loggedIn: loggedIn, cameras: cameras),
       home: HomePage(loggedIn: loggedIn, cameras: cameras),
     ),
   );

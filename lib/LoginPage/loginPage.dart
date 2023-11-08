@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:sign_checker/HomePage/stateSelectionPage.dart';
 import 'package:sign_checker/LoginPage/verificationFields.dart';
 import 'package:sign_checker/LoginPage/loginButton.dart';
 import 'package:sign_checker/LoginPage/signupPage.dart';
 import 'package:sign_checker/LoginPage/loginDecoration.dart';
-import 'package:sign_checker/HomePage/cameraPage.dart';
 import 'package:sign_checker/Core/apiClient.dart';
-import 'package:camera/camera.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.loggedIn});
@@ -105,10 +104,9 @@ class _LoginPageState extends State<LoginPage> {
                           LoginButton(onSubmit: () async {
                             final res = await _apiClient.login(loginData);
                             if (res["status"] == 200) {
-                              await availableCameras().then((value) =>
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (_) =>
-                                          CameraPage(cameras: value))));
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (_) =>
+                                      const StateSelectionPage()));
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                 content: Text(res["message"]),

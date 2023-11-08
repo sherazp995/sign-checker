@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class PasswordField extends StatefulWidget {
-  const PasswordField({super.key, required this.onPasswordChanged});
+  const PasswordField({super.key, required this.onPasswordChanged, this.hint = ''});
   final Function(String) onPasswordChanged;
+  final String hint;
 
   @override
   _PasswordFieldState createState() => _PasswordFieldState();
@@ -49,7 +50,7 @@ class _PasswordFieldState extends State<PasswordField> {
             onPressed: _toggleVisibility,
           ),
           border: InputBorder.none,
-          hintText: "Password",
+          hintText: widget.hint.isEmpty ? "Password" : widget.hint,
           hintStyle: TextStyle(
             color: Colors.grey[400],
           ),

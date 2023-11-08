@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiClient {
   final Dio _dio = Dio();
-  final String? apiUrl = 'http://192.168.0.102:4000/';
+  final String? apiUrl = 'http://192.168.0.109:4000/';
 
   Future<dynamic> register(dynamic data) async {
     try {
@@ -36,37 +36,38 @@ class ApiClient {
     }
   }
 
-  Future<dynamic> getUserProfileData(String accessToken) async {
+  Future<dynamic> getUserProfileData() async {
     try {
-      // Response response = await _dio.get(
-      //   'https://api.loginradius.com/identity/v2/auth/account',
-      // queryParameters: {'apikey': ApiSecret.apiKey},
-      // options: Options(
-      //   headers: {'Authorization': 'Bearer $accessToken'},
-      // ),
-      // );
-      // return response.data;
-      return null;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final user = jsonDecode(prefs.getString('user')!);
+      final accessToken = prefs.getString('accessToken');
+      Response response = await _dio.get(
+      '${apiUrl}users/${user['id']}',
+      options: Options(
+        headers: {'accesstoken': accessToken},
+      ),
+      );
+      return response.data;
     } on DioException catch (e) {
       return e.response!.data;
     }
   }
 
   Future<dynamic> updateUserProfile({
-    required String accessToken,
     required Map<String, dynamic> data,
   }) async {
     try {
-      // Response response = await _dio.put(
-      //   'https://api.loginradius.com/identity/v2/auth/account',
-      //   data: data,
-      // queryParameters: {'apikey': ApiSecret.apiKey},
-      // options: Options(
-      //   headers: {'Authorization': 'Bearer $accessToken'},
-      // ),
-      // );
-      // return response.data;
-      return null;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final user = jsonDecode(prefs.getString('user')!);
+      final accessToken = prefs.getString('accessToken');
+      Response response = await _dio.put(
+        '${apiUrl}users/update/${user['id']}',
+        data: data,
+      options: Options(
+        headers: {'accesstoken': accessToken},
+      ),
+      );
+      return response.data;
     } on DioException catch (e) {
       return e.response!.data;
     }

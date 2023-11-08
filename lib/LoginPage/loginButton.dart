@@ -10,16 +10,20 @@ class LoginButton extends StatelessWidget {
       height: 50,
       width: 100,
       child: ElevatedButton(
+        style: ButtonStyle(
+          padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+            EdgeInsets.zero,
+          ),
+        ),
         onPressed: onSubmit,
         child: Ink(
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
               colors: [
                 Color.fromRGBO(143, 148, 251, 1),
                 Color.fromRGBO(143, 148, 251, .6),
               ],
             ),
-            borderRadius: BorderRadius.circular(30.0),
           ),
           child: const Center(
             child: Text(

@@ -2,25 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const {sign} = require('jsonwebtoken');
-const fs = require('fs');
-const path = require('path');
 const passwordHash = require('password-hash');
-
-function saveImage (image, username) {
-  const imageData = Buffer.from(image, 'base64');
-  const fileName = `${username}-${Date.now()}.jpg`;
-  const dir = path.join(process.env.ROOT_PATH, 'uploads', 'userImages');
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
-  }
-  fs.writeFile(path.join(dir, fileName), imageData, (error) => {
-    if (error) {
-      console.error('Error saving image:', error);
-      return false;
-    }
-  });
-  return fileName;
-}
 
 router.get('/all', async (req, res) => {
   let result = await User.find()
@@ -29,16 +11,6 @@ router.get('/all', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   let result = await User.findOne({ _id: req.params.id })
-  res.json({ status: 200, result })
-});
-
-router.post('/find', async (req, res) => {
-  let result = await User.find(req.body)
-  res.json({ status: 200, result })
-});
-
-router.get('/students_by_project/:id', async (req, res) => {
-  let result = await User.find({ project: req.params.id, group: null })
   res.json({ status: 200, result })
 });
 
@@ -74,41 +46,19 @@ router.post('/delete/:id', async (req, res) => {
 
 router.post('/update/:id', async (req, res) => {
   try {
-    let user = req.body.user;
-    if (user.password) {
-      user.password = passwordHash.generate(user.password);
+    let user = req.body;
+    let dbUser = await User.findById(req.params.id);
+    if (passwordHash.verify(user.oldPassword, dbUser.password)) {
+      if (user.password) {
+        user.password = passwordHash.generate(user.newPassword);
+      }
+      let result = await User.findByIdAndUpdate(req.params.id, {
+        $set: user
+      }, { new: true });
+      res.json({ status: 200, result, message: 'Updated Successfully' });
+    } else {
+      res.json({status: 500, message: "Incorrect Old Password"});
     }
-    if (req.body.image){
-      user.image = saveImage(req.body.image, user.username);
-    }
-    let result = await User.findByIdAndUpdate(req.params.id, {
-      $set: user
-    }, { new: true });
-    res.json({ status: 200, result, message: 'Updated Successfully' });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: 'Something went wrong' });
-  }
-});
-
-router.post('/activate/:id', async (req, res) => {
-  try {
-    let result = await User.findByIdAndUpdate(req.params.id, {
-      $set: { status: 1 }
-    }, { new: true });
-    res.json({ status: 200, result, message: 'User Activated Successfully' });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: 'Something went wrong' });
-  }
-});
-
-router.post('/deactivate/:id', async (req, res) => {
-  try {
-    let result = await User.findByIdAndUpdate(req.params.id, {
-      $set: { status: 0 }
-    }, { new: true });
-    res.json({ status: 200, result, message: 'User Deactivated Successfully' });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'Something went wrong' });
@@ -136,15 +86,5 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Something went wrong' });
   }
 });
-
-// router.post('/logout', async (req, res) => {
-//   try {
-//     await User.findByIdAndUpdate(req.body._id, { $pull: { fcmToken: req.body.fcmToken } });
-//     res.json({ message: 'Success' });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({ message: error });
-//   }
-// });
 
 module.exports = router;

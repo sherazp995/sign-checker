@@ -1,30 +1,44 @@
-import 'package:sign_checker/Core/apiClient.dart';
-import 'package:sign_checker/LoginPage/passwordField.dart';
 import 'package:flutter/material.dart';
+import 'package:sign_checker/LoginPage/passwordField.dart';
 import 'package:sign_checker/LoginPage/signupButton.dart';
 
-class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
+class ProfileUpdatePage extends StatefulWidget {
+  const ProfileUpdatePage({super.key});
 
   @override
-  _SignupPageState createState() => _SignupPageState();
+  _ProfileUpdatePageState createState() => _ProfileUpdatePageState();
 }
 
-class _SignupPageState extends State<SignupPage> {
-  Map<String, dynamic> registerData = {};
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final _apiClient = ApiClient();
+class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
+  TextEditingController _firstNameController = TextEditingController();
+  TextEditingController _lastNameController = TextEditingController();
+  Map<String, dynamic> data = {};
+
+  Future<dynamic> updateProfile() async {
+    data['firstName'] = _firstNameController.text;
+    data['lastName'] = _lastNameController.text;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(30.0),
-      child: Column(
-        children: <Widget>[
-          Container(
-            child: Container(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Update Profile',
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(30.0),
+        child: Column(
+          children: <Widget>[
+            Container(
               padding: const EdgeInsets.all(5),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -65,51 +79,28 @@ class _SignupPageState extends State<SignupPage> {
                             hintStyle: TextStyle(color: Colors.grey[400]),
                           ),
                         ),
-                        TextField(
-                          controller: _emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          cursorColor: Colors.purpleAccent,
-                          style: const TextStyle(
-                              color: Color.fromRGBO(143, 148, 251, 1)),
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "Email address",
-                            hintStyle: TextStyle(color: Colors.grey[400]),
-                          ),
-                        ),
                         PasswordField(
+                            hint: "Old Password",
                             onPasswordChanged: (password) {
-                              registerData['password'] = password;
-                            }
-                        ),
+                              data['oldPassword'] = password;
+                            }),
                         PasswordField(
-                          hint: "Confirm Password",
+                            hint: "New Password",
                             onPasswordChanged: (confirmPassword) {
-                              registerData['confirmPassword'] = confirmPassword;
-                            }
-                        ),
+                              data['newPassword'] = confirmPassword;
+                            }),
                       ],
                     ),
                   ),
                 ],
               ),
             ),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          SignupButton(
-            onSubmit: () async {
-              registerData['email'] = _emailController.text;
-              registerData['firstName'] = _firstNameController.text;
-              registerData['lastName'] = _lastNameController.text;
-              final res = await _apiClient.register(registerData);
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(res["message"]),
-              ));
-            },
-          ),
-        ],
+            SignupButton(
+              hintText: "Update",
+              onSubmit: updateProfile,
+            ),
+          ],
+        ),
       ),
     );
   }

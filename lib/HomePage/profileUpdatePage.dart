@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:sign_checker/Core/apiClient.dart';
 import 'package:sign_checker/LoginPage/passwordField.dart';
 import 'package:sign_checker/LoginPage/signupButton.dart';
 
@@ -10,13 +13,32 @@ class ProfileUpdatePage extends StatefulWidget {
 }
 
 class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
-  TextEditingController _firstNameController = TextEditingController();
-  TextEditingController _lastNameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   Map<String, dynamic> data = {};
+  final _apiClient = ApiClient();
 
   Future<dynamic> updateProfile() async {
     data['firstName'] = _firstNameController.text;
     data['lastName'] = _lastNameController.text;
+    final res = await _apiClient.updateUserProfile(data: data);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(res['message']),
+    ));
+  }
+
+  getProfileData() async {
+    final res = await _apiClient.getUserProfileData();
+    setState(() {
+      _firstNameController.text = res['result']['firstName'];
+      _lastNameController.text = res['result']['lastName'];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getProfileData();
   }
 
   @override
@@ -85,7 +107,7 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                               data['oldPassword'] = password;
                             }),
                         PasswordField(
-                            hint: "New Password",
+                            hint: "New Password (unchanged)",
                             onPasswordChanged: (confirmPassword) {
                               data['newPassword'] = confirmPassword;
                             }),
@@ -94,6 +116,9 @@ class _ProfileUpdatePageState extends State<ProfileUpdatePage> {
                   ),
                 ],
               ),
+            ),
+            const SizedBox(
+              height: 10,
             ),
             SignupButton(
               hintText: "Update",

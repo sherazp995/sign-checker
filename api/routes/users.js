@@ -10,8 +10,13 @@ router.get('/all', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-  let result = await User.findOne({ _id: req.params.id })
-  res.json({ status: 200, result })
+  try {
+    let result = await User.findOne({ _id: req.params.id });
+    res.json({ status: 200, result })
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Something went wrong' });
+  }
 });
 
 router.post("/register", async (req, res) => {
@@ -49,7 +54,7 @@ router.post('/update/:id', async (req, res) => {
     let user = req.body;
     let dbUser = await User.findById(req.params.id);
     if (passwordHash.verify(user.oldPassword, dbUser.password)) {
-      if (user.password) {
+      if (user.newPassword) {
         user.password = passwordHash.generate(user.newPassword);
       }
       let result = await User.findByIdAndUpdate(req.params.id, {

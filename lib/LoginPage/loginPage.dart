@@ -32,93 +32,91 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        child: Container(
-          child: Column(
-            children: <Widget>[
-              const LoginDecoration(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  TextButton(
-                    style: ButtonStyle(
+        child: Column(
+          children: <Widget>[
+            const LoginDecoration(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                TextButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll<Color>(
+                        _pageLogin
+                            ? const Color.fromRGBO(143, 148, 251, 1)
+                            : Colors.transparent),
+                  ),
+                  child: Text(
+                    "Login",
+                    style: TextStyle(
+                      color: _pageLogin
+                          ? Colors.white
+                          : const Color.fromRGBO(143, 148, 251, 1),
+                    ),
+                  ),
+                  onPressed: () {
+                    _togglePage(true);
+                  },
+                ),
+                TextButton(
+                  style: ButtonStyle(
                       backgroundColor: MaterialStatePropertyAll<Color>(
                           _pageLogin
-                              ? const Color.fromRGBO(143, 148, 251, 1)
-                              : Colors.transparent),
+                              ? Colors.transparent
+                              : const Color.fromRGBO(143, 148, 251, 1))),
+                  child: Text(
+                    "SignUp",
+                    style: TextStyle(
+                      color: _pageLogin
+                          ? const Color.fromRGBO(143, 148, 251, 1)
+                          : Colors.white,
                     ),
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                        color: _pageLogin
-                            ? Colors.white
-                            : const Color.fromRGBO(143, 148, 251, 1),
-                      ),
-                    ),
-                    onPressed: () {
-                      _togglePage(true);
-                    },
                   ),
-                  TextButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll<Color>(
-                            _pageLogin
-                                ? Colors.transparent
-                                : const Color.fromRGBO(143, 148, 251, 1))),
-                    child: Text(
-                      "SignUp",
-                      style: TextStyle(
-                        color: _pageLogin
-                            ? const Color.fromRGBO(143, 148, 251, 1)
-                            : Colors.white,
-                      ),
-                    ),
-                    onPressed: () {
-                      _togglePage(false);
-                    },
-                  ),
-                ],
-              ),
-              _pageLogin
-                  ? Padding(
-                      padding: const EdgeInsets.all(30.0),
-                      child: Column(
-                        children: <Widget>[
-                          VerificationFields(onValueChanged: (type, value) {
-                            loginData[type] = value;
-                          }),
-                          Container(
-                            alignment: const AlignmentDirectional(1.0, 0.0),
-                            child: TextButton(
-                              child: const Text(
-                                "Forgot Password?",
-                                style: TextStyle(
-                                  color: Color.fromRGBO(143, 148, 251, 1),
-                                ),
+                  onPressed: () {
+                    _togglePage(false);
+                  },
+                ),
+              ],
+            ),
+            _pageLogin
+                ? Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Column(
+                      children: <Widget>[
+                        VerificationFields(onValueChanged: (type, value) {
+                          loginData[type] = value;
+                        }),
+                        Container(
+                          alignment: const AlignmentDirectional(1.0, 0.0),
+                          child: TextButton(
+                            child: const Text(
+                              "Forgot Password?",
+                              style: TextStyle(
+                                color: Color.fromRGBO(143, 148, 251, 1),
                               ),
-                              onPressed: () => {},
                             ),
+                            onPressed: () => {},
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          LoginButton(onSubmit: () async {
-                            final res = await _apiClient.login(loginData);
-                            if (res["status"] == 200) {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (_) =>
-                                      const StateSelectionPage()));
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text(res["message"]),
-                              ));
-                            }
-                          },),
-                        ],
-                      ),
-                    )
-                  : const SignupPage()
-            ],
-          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        LoginButton(onSubmit: () async {
+                          final res = await _apiClient.login(loginData);
+                          if (res["status"] == 200) {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (_) =>
+                                    const StateSelectionPage()));
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(res["message"]),
+                            ));
+                          }
+                        },),
+                      ],
+                    ),
+                  )
+                : const SignupPage()
+          ],
         ),
       ),
     );

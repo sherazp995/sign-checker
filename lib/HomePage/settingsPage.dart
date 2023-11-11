@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sign_checker/HomePage/offersPage.dart';
 import 'package:sign_checker/HomePage/profileUpdatePage.dart';
 import 'package:sign_checker/HomePage/stateSelectionPage.dart';
 
@@ -8,7 +9,7 @@ class SettingsPage extends StatelessWidget {
   final Map<String, Widget> routes = {
     'Change Your State': const StateSelectionPage(redirectBack: true),
     'Update Profile': const ProfileUpdatePage(),
-    // 'Payment Page': PaymentPage(),
+    'Offers': OffersPage(),
   };
 
   @override

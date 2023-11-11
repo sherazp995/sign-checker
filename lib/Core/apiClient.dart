@@ -42,7 +42,7 @@ class ApiClient {
       final user = jsonDecode(prefs.getString('user')!);
       final accessToken = prefs.getString('accessToken');
       Response response = await _dio.get(
-      '${apiUrl}users/${user['id']}',
+      '${apiUrl}users/${user['_id']}',
       options: Options(
         headers: {'accesstoken': accessToken},
       ),
@@ -60,8 +60,8 @@ class ApiClient {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       final user = jsonDecode(prefs.getString('user')!);
       final accessToken = prefs.getString('accessToken');
-      Response response = await _dio.put(
-        '${apiUrl}users/update/${user['id']}',
+      Response response = await _dio.post(
+        '${apiUrl}users/update/${user['_id']}',
         data: data,
       options: Options(
         headers: {'accesstoken': accessToken},
@@ -73,7 +73,7 @@ class ApiClient {
     }
   }
 
-  Future<dynamic> logout(String accessToken) async {
+  Future<dynamic> logout() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.remove('user');
@@ -81,6 +81,22 @@ class ApiClient {
       return true;
     } on Error catch (_) {
       return false;
+    }
+  }
+
+  Future<dynamic> getAllOffers() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final accessToken = prefs.getString('accessToken');
+      Response response = await _dio.get(
+        '${apiUrl}offers/all',
+        options: Options(
+          headers: {'accesstoken': accessToken},
+        ),
+      );
+      return response.data;
+    } on DioException catch (e) {
+      return e.response!.data;
     }
   }
 }

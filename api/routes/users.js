@@ -73,6 +73,7 @@ router.post('/update/:id', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     let result = await User.findOne({ email: req.body.email });
+    console.log(result)
 
     if (result) {
       if (passwordHash.verify(req.body.password, result.password)) {
